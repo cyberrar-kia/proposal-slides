@@ -24,10 +24,8 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:'DM Mono',monospace;
-  min-height:100vh;
-  overflow-x:hidden;
-  overflow-y:scroll;
-  scroll-snap-type:y mandatory;
+  height:100vh;
+  overflow:hidden;
 }
 
 /* ── PROGRESS BAR ── */
@@ -58,23 +56,38 @@ body{
 
 /* ── SLIDES WRAPPER ── */
 .slides{
-  padding-top:0;
+  position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  overflow:hidden;
 }
 
 /* ── SLIDE BASE ── */
 .slide{
-  min-height:100svh;
-  padding:60px 24px 80px;
+  position:absolute;
+  inset:0;
+  padding:72px 24px 80px;
   display:flex;flex-direction:column;justify-content:center;
-  position:relative;
-  border-bottom:1px solid var(--border);
-  opacity:0;transform:translateY(24px);
-  transition:opacity 0.7s ease,transform 0.7s ease;
+  border-bottom:none;
+  opacity:0;
+  transform:translateY(40px);
+  transition:opacity 0.5s ease,transform 0.5s ease;
   overflow:hidden;
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
+  pointer-events:none;
 }
-.slide.visible{opacity:1;transform:translateY(0)}
+.slide.active{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:all;
+}
+.slide.exit-up{
+  opacity:0;
+  transform:translateY(-40px);
+}
+.slide.exit-down{
+  opacity:0;
+  transform:translateY(40px);
+}
+
 .slide-inner{max-width:720px;margin:0 auto;width:100%;max-height:calc(100svh - 140px);overflow-y:auto;padding-right:4px;}
 .slide-inner::-webkit-scrollbar{width:2px}
 .slide-inner::-webkit-scrollbar-track{background:transparent}
@@ -685,6 +698,7 @@ body{
 const slides = document.querySelectorAll('.slide');
 const total = slides.length;
 let current = 0;
+let animating = false;
 
 // Build dots
 const dotsContainer = document.getElementById('slideDots');
@@ -695,18 +709,8 @@ slides.forEach((_,i)=>{
   dotsContainer.appendChild(dot);
 });
 
-// Observer for reveal
-const observer = new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('visible');
-      // update current based on which is most visible
-      const idx = Array.from(slides).indexOf(e.target);
-      if(idx !== -1) updateNav(idx);
-    }
-  });
-},{threshold:0.4});
-slides.forEach(s=>observer.observe(s));
+// Show first slide
+slides[0].classList.add('active','visible');
 
 function updateNav(idx){
   current = idx;
@@ -714,32 +718,43 @@ function updateNav(idx){
   document.querySelectorAll('.slide-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
   document.getElementById('prevBtn').disabled = idx===0;
   document.getElementById('nextBtn').disabled = idx===total-1;
-  // progress bar
   document.getElementById('progressBar').style.width = ((idx+1)/total*100)+'%';
 }
 
+function goTo(idx){
+  if(animating || idx===current) return;
+  animating = true;
+  const dir = idx > current ? 1 : -1;
+  const outClass = dir > 0 ? 'exit-up' : 'exit-down';
+
+  // Exit current
+  slides[current].classList.add(outClass);
+  slides[current].classList.remove('active');
+
+  // Enter new
+  slides[idx].style.transform = dir > 0 ? 'translateY(40px)' : 'translateY(-40px)';
+  slides[idx].classList.add('active','visible');
+
+  setTimeout(()=>{
+    slides[current].classList.remove(outClass);
+    slides[idx].style.transform = '';
+    updateNav(idx);
+    animating = false;
+  }, 520);
+}
+
 function navigate(dir){
-  const next = Math.max(0,Math.min(total-1,current+dir));
+  const next = Math.max(0, Math.min(total-1, current+dir));
   goTo(next);
 }
 
-function goTo(idx){
-  slides[idx].scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-// Keyboard
+// Keyboard only
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'||e.key==='ArrowRight') navigate(1);
   if(e.key==='ArrowUp'||e.key==='ArrowLeft') navigate(-1);
 });
 
-// Swipe
-let touchStart=0;
-document.addEventListener('touchstart',e=>touchStart=e.touches[0].clientY);
-document.addEventListener('touchend',e=>{
-  const diff = touchStart - e.changedTouches[0].clientY;
-  if(Math.abs(diff)>50) navigate(diff>0?1:-1);
-});
+updateNav(0);
 </script>
 </body>
 </html>

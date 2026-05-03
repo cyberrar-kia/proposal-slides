@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Joshua Ovbiagele — Project Proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a0a;
+  --surface:#111111;
+  --surface2:#1a1a1a;
+  --border:#2a2a2a;
+  --text:#f0ede8;
+  --muted:#666;
+  --accent:#e8c547;
+  --accent2:#4ecdc4;
+  --accent3:#ff6b6b;
+  --green:#6bcb77;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{
+  position:fixed;top:0;left:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  z-index:200;transition:width 0.3s ease;
+}
+
+/* ── NAV ── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:16px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-id{
+  font-size:11px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--muted);
+}
+.nav-id span{color:var(--accent)}
+.nav-counter{
+  font-size:11px;color:var(--muted);letter-spacing:0.1em;
+}
+.nav-counter span{color:var(--text)}
+
+/* ── SLIDES WRAPPER ── */
+.slides{
+  padding-top:48px;
+}
+
+/* ── SLIDE BASE ── */
+.slide{
+  min-height:100vh;
+  padding:60px 24px 48px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;
+  border-bottom:1px solid var(--border);
+  opacity:0;transform:translateY(24px);
+  transition:opacity 0.7s ease,transform 0.7s ease;
+}
+.slide.visible{opacity:1;transform:translateY(0)}
+.slide-inner{max-width:720px;margin:0 auto;width:100%}
+
+/* ── SLIDE LABELS ── */
+.slide-label{
+  font-size:10px;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.slide-label::before{
+  content:'';width:24px;height:1px;background:var(--accent);flex-shrink:0;
+}
+.slide-num{
+  position:absolute;top:64px;right:24px;
+  font-size:80px;font-weight:800;
+  font-family:'Syne',sans-serif;
+  color:rgba(255,255,255,0.03);
+  line-height:1;pointer-events:none;
+  user-select:none;
+}
+
+/* ── TYPOGRAPHY ── */
+.slide-h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(36px,8vw,72px);
+  font-weight:800;line-height:0.95;
+  letter-spacing:-0.02em;
+  margin-bottom:24px;
+}
+.slide-h1 em{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;font-weight:400;
+  color:var(--accent);
+}
+.slide-h2{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(24px,5vw,42px);
+  font-weight:700;line-height:1.05;
+  letter-spacing:-0.02em;
+  margin-bottom:20px;
+}
+.slide-h2 em{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;font-weight:400;
+  color:var(--accent);
+}
+.slide-body{
+  font-size:14px;line-height:1.85;
+  color:rgba(240,237,232,0.65);
+  font-weight:300;
+  max-width:560px;
+}
+.slide-body strong{color:var(--text);font-weight:500}
+
+/* ── COVER SLIDE ── */
+.slide-cover{
+  background:
+    radial-gradient(ellipse 120% 80% at 70% 120%, rgba(232,197,71,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 60% at 20% 0%, rgba(78,205,196,0.06) 0%, transparent 50%),
+    var(--bg);
+}
+.cover-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  padding:8px 16px;border-radius:2px;
+  font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:32px;
+}
+.cover-tag span{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.cover-meta{
+  display:flex;flex-wrap:wrap;gap:24px;margin-top:40px;
+  padding-top:32px;
+  border-top:1px solid var(--border);
+}
+.meta-item{display:flex;flex-direction:column;gap:4px}
+.meta-label{font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+.meta-value{font-size:13px;color:var(--text)}
+.meta-value.highlight{color:var(--accent)}
+
+/* ── INTRO SLIDE ── */
+.intro-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;margin-top:32px;
+}
+.intro-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:20px;
+  position:relative;overflow:hidden;
+}
+.intro-card::before{
+  content:'';
+  position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--accent);
+}
+.intro-card-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.intro-card-text{font-size:13px;line-height:1.7;color:rgba(240,237,232,0.7);font-weight:300}
+.intro-card-text strong{color:var(--text);font-weight:500}
+
+/* ── SITES SLIDE ── */
+.site-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:24px;margin-top:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.site-card + .site-card{margin-top:12px}
+.site-url{
+  font-size:12px;color:var(--accent);
+  letter-spacing:0.05em;text-decoration:none;
+  display:flex;align-items:center;gap:8px;
+}
+.site-url::after{content:'↗';font-size:10px}
+.site-desc{font-size:12px;line-height:1.7;color:rgba(240,237,232,0.55);font-weight:300}
+.site-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{
+  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  border:1px solid var(--border);
+  padding:4px 10px;color:var(--muted);
+}
+.tag.active{border-color:var(--accent2);color:var(--accent2)}
+.honesty-box{
+  background:rgba(232,197,71,0.05);
+  border:1px solid rgba(232,197,71,0.2);
+  padding:16px;margin-top:16px;
+}
+.honesty-box p{font-size:12px;line-height:1.75;color:rgba(240,237,232,0.6);font-weight:300}
+.honesty-box strong{color:var(--accent);font-weight:500}
+
+/* ── AI WORKFLOW ── */
+.workflow-steps{margin-top:28px;display:flex;flex-direction:column;gap:0}
+.workflow-step{
+  display:flex;gap:16px;
+  padding:20px 0;
+  border-bottom:1px solid var(--border);
+}
+.workflow-step:last-child{border-bottom:none}
+.step-num{
+  font-family:'Syne',sans-serif;
+  font-size:28px;font-weight:800;
+  color:var(--border);flex-shrink:0;
+  line-height:1;width:32px;
+}
+.step-content{}
+.step-title{
+  font-family:'Syne',sans-serif;
+  font-size:14px;font-weight:700;
+  color:var(--text);margin-bottom:6px;
+}
+.step-desc{font-size:12px;line-height:1.75;color:rgba(240,237,232,0.55);font-weight:300}
+.step-desc strong{color:var(--accent2);font-weight:500}
+
+/* ── MILESTONES ── */
+.milestone-cards{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+.milestone-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  padding:24px;
+  position:relative;
+}
+.milestone-card.featured{
+  border-color:var(--accent);
+  background:rgba(232,197,71,0.04);
+}
+.milestone-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:16px;flex-wrap:wrap;margin-bottom:14px;
+}
+.milestone-title{
+  font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:700;color:var(--text);
+}
+.milestone-price{
+  font-family:'Syne',sans-serif;
+  font-size:22px;font-weight:800;
+  color:var(--accent);white-space:nowrap;
+}
+.milestone-timeline{
+  font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.milestone-deliverables{
+  display:flex;flex-direction:column;gap:6px;
+}
+.deliverable{
+  display:flex;gap:10px;align-items:flex-start;
+  font-size:12px;line-height:1.6;color:rgba(240,237,232,0.55);font-weight:300;
+}
+.deliverable::before{content:'→';color:var(--accent);flex-shrink:0;font-size:11px;margin-top:1px}
+.total-row{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:20px 24px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;
+}
+.total-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+.total-value{
+  font-family:'Syne',sans-serif;
+  font-size:28px;font-weight:800;
+  color:var(--text);
+}
+.total-value span{color:var(--accent)}
+
+/* ── REVIEW SLIDE ── */
+.review-grid{margin-top:28px;display:flex;flex-direction:column;gap:12px}
+.review-item{
+  display:flex;gap:16px;
+  background:var(--surface);border:1px solid var(--border);
+  padding:20px;
+}
+.review-icon{
+  width:36px;height:36px;flex-shrink:0;
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+.review-title{
+  font-family:'Syne',sans-serif;
+  font-size:13px;font-weight:700;color:var(--text);
+  margin-bottom:4px;
+}
+.review-desc{font-size:12px;line-height:1.7;color:rgba(240,237,232,0.55);font-weight:300}
+.review-desc strong{color:var(--accent);font-weight:500}
+.proof-box{
+  background:rgba(107,203,119,0.05);
+  border:1px solid rgba(107,203,119,0.2);
+  padding:20px;margin-top:12px;
+}
+.proof-box p{font-size:12px;line-height:1.8;color:rgba(240,237,232,0.7);font-weight:300}
+.proof-box strong{color:var(--green);font-weight:500}
+
+/* ── CLOSING SLIDE ── */
+.closing-slide{
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(232,197,71,0.1) 0%, transparent 60%),
+    var(--bg);
+}
+.closing-statement{
+  font-family:'Instrument Serif',serif;
+  font-size:clamp(22px,5vw,38px);
+  font-style:italic;line-height:1.4;
+  color:rgba(240,237,232,0.85);
+  margin:28px 0;
+}
+.closing-statement strong{
+  font-style:normal;
+  font-family:'Syne',sans-serif;
+  color:var(--accent);font-weight:700;
+}
+.contact-row{
+  display:flex;flex-wrap:wrap;gap:12px;margin-top:36px;
+}
+.contact-item{
+  border:1px solid var(--border);
+  padding:12px 20px;
+  font-size:12px;color:rgba(240,237,232,0.6);
+  display:flex;align-items:center;gap:8px;
+}
+.contact-item span{color:var(--text)}
+.cta-row{
+  display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;
+}
+.cta-btn{
+  background:var(--accent);color:var(--bg);
+  font-family:'Syne',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;
+  padding:14px 28px;text-decoration:none;
+  display:inline-block;
+  transition:opacity 0.2s;
+}
+.cta-btn:hover{opacity:0.85}
+.cta-ghost{
+  border:1px solid var(--border);color:var(--text);
+  font-family:'Syne',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;
+  padding:14px 28px;text-decoration:none;
+  display:inline-block;
+  transition:border-color 0.2s;
+}
+.cta-ghost:hover{border-color:var(--accent)}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(10,10,10,0.9);
+  backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;z-index:100;
+}
+.slide-dots{
+  display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1;
+}
+.slide-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--border);
+  transition:background 0.3s,transform 0.3s;
+  flex-shrink:0;
+}
+.slide-dot.active{background:var(--accent);transform:scale(1.4)}
+.nav-btn{
+  background:none;border:1px solid var(--border);
+  color:var(--muted);padding:8px 16px;
+  font-family:'DM Mono',monospace;font-size:12px;
+  transition:all 0.2s;white-space:nowrap;flex-shrink:0;
+}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.nav-btn:disabled{opacity:0.2;pointer-events:none}
+
+/* ── DIVIDER ── */
+.divider{width:40px;height:1px;background:var(--border);margin:20px 0}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav">
+  <div class="nav-id">Joshua <span>Ovbiagele</span></div>
+  <div class="nav-counter">Slide <span id="currentSlide">1</span> / 7</div>
+</nav>
+
+<div class="slides" id="slidesContainer">
+
+  <!-- ══ SLIDE 1 — COVER ══ -->
+  <div class="slide slide-cover" data-slide="1">
+    <div class="slide-num">01</div>
+    <div class="slide-inner">
+      <div class="cover-tag">
+        <span></span>
+        Proposal — Ready to start
+      </div>
+      <h1 class="slide-h1">Next.js<br>Monorepo<br><em>+ 2 Sites</em></h1>
+      <p class="slide-body">A structured, milestone-based proposal for the multi-brand web portfolio project — Turborepo foundation, Safe And Well DBT, and codeswitcher.</p>
+      <div class="cover-meta">
+        <div class="meta-item">
+          <div class="meta-label">Submitted by</div>
+          <div class="meta-value">Joshua Ovbiagele</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Stack</div>
+          <div class="meta-value">Next.js 15 · Tailwind · GSAP · Vercel</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Phase 1 Total</div>
+          <div class="meta-value highlight">$2,650</div>
+        </div>
+        <div class="meta-item">
+          <div class="meta-label">Start</div>
+          <div class="meta-value">Within one week</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2 — UNDERSTANDING ══ -->
+  <div class="slide" data-slide="2">
+    <div class="slide-num">02</div>
+    <div class="slide-inner">
+      <div class="slide-label">Project Understanding</div>
+      <h2 class="slide-h2">What you're<br><em>actually building</em></h2>
+      <p class="slide-body">This isn't a simple site rebuild. It's a shared technical foundation for a multi-brand portfolio — and the quality of that foundation determines how fast every subsequent site gets built.</p>
+      <div class="intro-grid">
+        <div class="intro-card">
+          <div class="intro-card-label">The real goal of Milestone 1</div>
+          <div class="intro-card-text">A Turborepo monorepo that two opinionated teams can develop against without stepping on each other. Shared UI tokens, separate brand configs, one CI/CD pipeline. <strong>If M1 is rushed, M2 and M3 pay for it.</strong></div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-card-label">Two very different tones</div>
+          <div class="intro-card-text">Safe And Well DBT = calm, trustworthy, clinical warmth. codeswitcher = studio flagship, higher visual ambition, GSAP sequences. <strong>Same system, completely different execution.</strong></div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-card-label">The bigger picture</div>
+          <div class="intro-card-text">Phase 2 = 4 more sites immediately after. This is a <strong>long-term relationship</strong>, not a one-off. I've read that part and I'm applying with that in mind.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3 — LIVE SITES ══ -->
+  <div class="slide" data-slide="3">
+    <div class="slide-num">03</div>
+    <div class="slide-inner">
+      <div class="slide-label">Portfolio</div>
+      <h2 class="slide-h2">Live sites<br><em>I've built</em></h2>
+
+      <div class="site-card">
+        <a href="https://fasttrackliteracy.com" class="site-url" target="_blank">fasttrackliteracy.com</a>
+        <div class="site-tags">
+          <span class="tag active">Next.js 14</span>
+          <span class="tag active">Tailwind CSS</span>
+          <span class="tag active">Vercel</span>
+          <span class="tag">Formspree</span>
+          <span class="tag">Mobile-first</span>
+        </div>
+        <div class="site-desc">Full multi-page build for a UK/Jamaica education company. 9 pages, dynamic components, animation, form integration. Built solo from brief to deployment. <strong style="color:var(--text)">70+ client revision items delivered.</strong></div>
+      </div>
+
+      <div class="site-card">
+        <a href="https://the-dock-ashen.vercel.app" class="site-url" target="_blank">the-dock-ashen.vercel.app</a>
+        <div class="site-tags">
+          <span class="tag active">HTML/CSS/JS</span>
+          <span class="tag active">Scroll animations</span>
+          <span class="tag active">Parallax</span>
+          <span class="tag">Custom cursor</span>
+          <span class="tag">Mobile-first</span>
+        </div>
+        <div class="site-desc">Spec demo built this week for a restaurant cold pitch. Demonstrates animation sensibility — parallax hero, scroll reveals, tab-switching sections, booking form UX.</div>
+      </div>
+
+      <div class="honesty-box">
+        <p><strong>Honest disclosure on GSAP:</strong> I've implemented scroll reveals and entrance animations. The SplitText-style sequences referenced for codeswitcher are territory I'd work through using your reference URLs and Claude Code. I won't pretend otherwise — but I will deliver it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4 — AI WORKFLOW ══ -->
+  <div class="slide" data-slide="4">
+    <div class="slide-num">04</div>
+    <div class="slide-inner">
+      <div class="slide-label">Development Approach</div>
+      <h2 class="slide-h2">My AI<br><em>workflow</em></h2>
+      <p class="slide-body">I use Claude Code as my primary development partner — not occasionally, but throughout every project. Here's what that looks like concretely.</p>
+      <div class="workflow-steps">
+        <div class="workflow-step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <div class="step-title">Architecture First</div>
+            <div class="step-desc">Before writing a line, I brief Claude on the full stack and constraints. For this project: Turborepo workspace structure, shared package boundaries, brand token system. <strong>Architecture decisions happen before code, not during.</strong></div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <div class="step-title">Component Generation</div>
+            <div class="step-desc">I describe purpose, props, design intent — Claude drafts, I refine and own. <strong>No boilerplate writing. More time on the things that matter: spacing, motion timing, mobile behaviour.</strong></div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <div class="step-title">Revision Implementation</div>
+            <div class="step-desc">When you deliver written feedback, I feed it directly into Claude alongside the component code and implement methodically. <strong>Not by guessing — by precision.</strong></div>
+          </div>
+        </div>
+        <div class="workflow-step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <div class="step-title">Cursor for Inline Edits</div>
+            <div class="step-desc">File-level edits, quick fixes, and iteration go through Cursor. The combination means I work at the pace your timeline requires — <strong>not despite AI, because of it.</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5 — MILESTONES ══ -->
+  <div class="slide" data-slide="5">
+    <div class="slide-num">05</div>
+    <div class="slide-inner">
+      <div class="slide-label">Pricing</div>
+      <h2 class="slide-h2">Quote per<br><em>milestone</em></h2>
+      <div class="milestone-cards">
+
+        <div class="milestone-card">
+          <div class="milestone-header">
+            <div>
+              <div class="milestone-title">Milestone 1 — Monorepo Foundation</div>
+              <div class="milestone-timeline">⏱ 3–5 days</div>
+            </div>
+            <div class="milestone-price">$650</div>
+          </div>
+          <div class="milestone-deliverables">
+            <div class="deliverable">Turborepo: packages/ui, packages/brand-tokens, apps/safe-and-well-dbt, apps/codeswitcher</div>
+            <div class="deliverable">Next.js 15 App Router, TypeScript, Tailwind shared base + per-brand theme extension</div>
+            <div class="deliverable">Shared component library: layout, typography, buttons, nav, footer, section wrappers</div>
+            <div class="deliverable">GSAP + ScrollTrigger initialized with shared scroll reveal utilities</div>
+            <div class="deliverable">Framer Motion page transition wrapper</div>
+            <div class="deliverable">MDX configured, both apps on Vercel staging with GitHub Actions CI/CD</div>
+          </div>
+        </div>
+
+        <div class="milestone-card featured">
+          <div class="milestone-header">
+            <div>
+              <div class="milestone-title">Milestone 2 — Safe And Well DBT</div>
+              <div class="milestone-timeline">⏱ 6–8 days</div>
+            </div>
+            <div class="milestone-price">$850</div>
+          </div>
+          <div class="milestone-deliverables">
+            <div class="deliverable">11 pages: Homepage, About, Services overview, 4 service pages, 3 specialty pages, FAQ, Contact</div>
+            <div class="deliverable">Calm animation pacing — subtle scroll reveals, gentle entrance timing</div>
+            <div class="deliverable">GHL form embed on Contact page</div>
+            <div class="deliverable">Lighthouse 90+ mobile · Two full revision rounds included</div>
+          </div>
+        </div>
+
+        <div class="milestone-card">
+          <div class="milestone-header">
+            <div>
+              <div class="milestone-title">Milestone 3 — codeswitcher</div>
+              <div class="milestone-timeline">⏱ 8–10 days</div>
+            </div>
+            <div class="milestone-price">$1,150</div>
+          </div>
+          <div class="milestone-deliverables">
+            <div class="deliverable">6 pages: Homepage, Services, Clients, Case Studies, Company, Contact</div>
+            <div class="deliverable">GSAP scroll sequences on homepage, SplitText-style headline reveals</div>
+            <div class="deliverable">Hero video player, Framer Motion page transitions</div>
+            <div class="deliverable">Lighthouse 90+ mobile · Two full revision rounds included</div>
+          </div>
+        </div>
+
+        <div class="total-row">
+          <div class="total-label">Phase 1 Total</div>
+          <div class="total-value"><span>$2,650</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 6 — REVIEW PROCESS ══ -->
+  <div class="slide" data-slide="6">
+    <div class="slide-num">06</div>
+    <div class="slide-inner">
+      <div class="slide-label">How I Work With Feedback</div>
+      <h2 class="slide-h2">On revisions<br><em>&amp; detail</em></h2>
+      <p class="slide-body">You described yourselves as thorough reviewers. That's exactly what I need from a client — vague feedback produces vague results.</p>
+      <div class="review-grid">
+        <div class="review-item">
+          <div class="review-icon">📋</div>
+          <div>
+            <div class="review-title">Written feedback → methodical implementation</div>
+            <div class="review-desc">I don't skim revision notes. I go line by line, implement each item, and re-deploy. <strong>If something isn't addressed, you'll see it in the re-deployment — not in an excuse.</strong></div>
+          </div>
+        </div>
+        <div class="review-item">
+          <div class="review-icon">📱</div>
+          <div>
+            <div class="review-title">Mobile-first, not mobile-adapted</div>
+            <div class="review-desc">Every component starts at 375px. I test on real devices before submitting for review. <strong>I won't ask you to review a milestone I haven't tested myself on mobile.</strong></div>
+          </div>
+        </div>
+        <div class="review-item">
+          <div class="review-icon">⚡</div>
+          <div>
+            <div class="review-title">Fast turnaround on revision rounds</div>
+            <div class="review-desc">Within your 48-hour feedback window, I implement and re-deploy the same day. <strong>Your review rhythm shouldn't be held up by mine.</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="proof-box">
+        <p><strong>Real proof:</strong> My most recent project involved 70+ detailed revision items across a 9-page site (fasttrackliteracy.com). Every item was delivered. The client called it "the last set of changes." That's the standard I work to.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7 — CLOSING ══ -->
+  <div class="slide closing-slide" data-slide="7">
+    <div class="slide-num">07</div>
+    <div class="slide-inner">
+      <div class="slide-label">Let's Build</div>
+      <h2 class="slide-h2">Ready when<br><em>you are</em></h2>
+      <p class="closing-statement">
+        "Phase 1 is two sites. If this goes well, four additional brand sites follow immediately." — <strong>That's the engagement I want.</strong>
+      </p>
+      <p class="slide-body">I've built for this brief, I use the tools you require daily, and I've proven I can handle detailed client feedback at volume. Available to start within one week.</p>
+      <div class="divider"></div>
+      <div class="contact-row">
+        <div class="contact-item">✉ <span>joshua@scaltron.com</span></div>
+        <div class="contact-item">🌐 <span>fasttrackliteracy.com</span></div>
+        <div class="contact-item">⚡ <span>Claude Code · Cursor · Daily</span></div>
+      </div>
+      <div class="cta-row">
+        <a href="https://www.upwork.com" class="cta-btn">Send Proposal on Upwork</a>
+        <a href="https://fasttrackliteracy.com" class="cta-ghost" target="_blank">View Live Work →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>← Prev</button>
+  <div class="slide-dots" id="slideDots"></div>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+// Build dots
+const dotsContainer = document.getElementById('slideDots');
+slides.forEach((_,i)=>{
+  const dot = document.createElement('div');
+  dot.className = 'slide-dot' + (i===0?' active':'');
+  dot.onclick = ()=>goTo(i);
+  dotsContainer.appendChild(dot);
+});
+
+// Observer for reveal
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      // update current based on which is most visible
+      const idx = Array.from(slides).indexOf(e.target);
+      if(idx !== -1) updateNav(idx);
+    }
+  });
+},{threshold:0.4});
+slides.forEach(s=>observer.observe(s));
+
+function updateNav(idx){
+  current = idx;
+  document.getElementById('currentSlide').textContent = idx+1;
+  document.querySelectorAll('.slide-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===total-1;
+  // progress bar
+  document.getElementById('progressBar').style.width = ((idx+1)/total*100)+'%';
+}
+
+function navigate(dir){
+  const next = Math.max(0,Math.min(total-1,current+dir));
+  goTo(next);
+}
+
+function goTo(idx){
+  slides[idx].scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowRight') navigate(1);
+  if(e.key==='ArrowUp'||e.key==='ArrowLeft') navigate(-1);
+});
+
+// Swipe
+let touchStart=0;
+document.addEventListener('touchstart',e=>touchStart=e.touches[0].clientY);
+document.addEventListener('touchend',e=>{
+  const diff = touchStart - e.changedTouches[0].clientY;
+  if(Math.abs(diff)>50) navigate(diff>0?1:-1);
+});
+</script>
+</body>
+</html>
